@@ -12,17 +12,34 @@ const app = dialogflow({debug: true});
 // Handle the Dialogflow intent named My Weight and Height.
 // The intent collects a parameter named weight and length.
 app.intent('My Weight and Height',(conv,{weight,length}) => {
-    const w = weight.amount;
-    var h = length.amount;
-
-//converting the length measures
-    if(length.unit == "cm" || length.unit == "centimeter"){
-        h = h/100;
-    }
-    else if(length.unit == "ft"){
-        h = h*(0.3048); 
-    }
+  
+  const lengthSize = length.size();  
+  var w = weight.amount;
+  var h = 0, h1 = 0, h2 = 0;
     
+    //changing the length measures
+  if(lengthSize === 1){
+    h = length.amount;
+    switch(length.unit){
+      case "m":
+        h = h;
+        break;
+      case "cm":
+          h = h/100;
+        break;
+      case "ft":
+        h = h*(0.3048);
+        break;
+      case "inch":
+        h = h*(0.0254);
+        break;
+      default:
+        break;
+    }   
+  } else if(lengthSize === 2){
+  	h1 = length[1].amount;
+    h2 = length[2].amount;
+  } 
     var bmi = w/(h*h);
     bmi = Math.round(bmi * 100)/100;
     var health = "";
