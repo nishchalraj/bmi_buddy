@@ -12,14 +12,11 @@ const app = dialogflow({debug: true});
 // Handle the Dialogflow intent named My Weight and Height.
 // The intent collects a parameter named weight and length.
 app.intent('My Weight and Height',(conv,{weight,length}) => {
-  
-  var w = 0;
-  var h = 0;
-  var h1 = 0;
-  var h2 = 0;
     
-  //changing the weight measures
-  switch(weight.unit){
+  //for weight
+  var w = weight[0].amount;
+  
+  switch(weight[0].unit){
     case "kg":
       w = w;
       break;
@@ -33,40 +30,13 @@ app.intent('My Weight and Height',(conv,{weight,length}) => {
       break;
   }
   
+  //for height
   var ls = length.length;
+  var h = 0;
+  
   if (ls === 1){
-  	ls = 3
-  } else if (ls === 2) {
-  	ls = 4
-  }
-  //changing the length measures
-  /*switch(length.length){
-    case 1:
-    h = length.amount;
-    switch(length.unit){
-      case "m":
-        h = h;
-        break;
-      case "cm":
-          h = h/100;
-        break;
-      case "ft":
-        h = h*(0.3048);
-        break;
-      case "inch":
-        h = h*(0.0254);
-        break;
-      default:
-        break;
-    }   
-      break;
-    
-  //} else if(length.length == 2){
-  	case 2:
-    h1 = length[1].amount;
-    h2 = length[2].amount;
-    
-    switch(length[1].unit){
+  	var h1 = length[0].amount;
+    switch(length[0].unit){
       case "m":
         h1 = h1;
         break;
@@ -82,7 +52,12 @@ app.intent('My Weight and Height',(conv,{weight,length}) => {
       default:
         break;
     }
-    switch(length[2].unit){
+    h = h1;
+  } else if (ls === 2) {
+  	var h2 = length[0].amount;
+    var h3 = length[1].amount;
+    
+    switch(length[0].unit){
       case "m":
         h2 = h2;
         break;
@@ -97,12 +72,26 @@ app.intent('My Weight and Height',(conv,{weight,length}) => {
         break;
       default:
         break;
+    }
+    switch(length[1].unit){
+      case "m":
+        h3 = h3;
+        break;
+      case "cm":
+        h3 = h3/100;
+        break;
+      case "ft":
+        h3 = h3*(0.3048);
+        break;
+      case "inch":
+        h3 = h3*(0.0254);
+        break;
+      default:
+        break;
     }  
-      break;
-    default:
-      break;
-  } 
-    */
+    h = h2 + h3;
+  }
+
   var bmi = w/(h*h);
   bmi = Math.round(bmi * 100)/100;
   var health = "";
@@ -127,7 +116,7 @@ app.intent('My Weight and Height',(conv,{weight,length}) => {
   }
     
   // Respond with the user's BMI.
-  conv.close('Your BMI is ' + length[0].unit + " and according to it you are " + length[1].unit + ". " + ls);
+  conv.close('Your BMI is ' + bmi + " and according to it you are " + health + ". " + conclusion);
              
 });
 
